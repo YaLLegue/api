@@ -3,7 +3,7 @@
 
 var mongoose = require('mongoose'),
   http = require('http'),
-  conectionString = 'mongodb://localhost:27017/yallegue',
+  conectionString = 'mongodb://localhost:27017/mapaton',
   app = require('./app');
 
 mongoose.connect(conectionString, function (err) {
