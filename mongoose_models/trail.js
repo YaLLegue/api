@@ -3,8 +3,8 @@ var mongoose = require('mongoose'),
 
 var trailSchema = new Schema({
     st_asgeojson: {
-        type: String,
-        coordinates: []
+        type: [Number],
+        index: '2dsphere'
     },
     route_id: String,
     route_short_name: String,
