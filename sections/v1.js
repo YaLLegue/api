@@ -1,9 +1,10 @@
 /* jslint node: true */
 'use strict';
 var fs = require('fs'),
-    schemas = {},
+    schemas  = {},
     basePath = __dirname + '/../mongoose_models',
-    Partida = require(basePath + '/partida.js');
+    Partida  = require(basePath + '/partida.js'),
+    User     = require(basePath + '/user.js');
 
 fs.readdirSync(basePath).forEach(
     function(file) {
@@ -39,6 +40,15 @@ function isEmpty(object) {
 
 
 module.exports = function(server) {
+    server.get('/v1/users/:user', function (req, res) {
+      User.find({username: req.params.user})
+        .exec(function (err, doc) {
+          if (err) { throw err;}
+          res.send(doc[0]);
+        });
+
+
+    });
     server.get('/v1/:schema', function(req, res) {
         var condition = {},
             schema = req.params.schema.slice(0, -1),
