@@ -2,7 +2,8 @@
 'use strict';
 var fs        = require('fs'),
   schemas   = {},
-  basePath  = __dirname + '/../mongoose_models';
+  basePath  = __dirname + '/../mongoose_models',
+  Partida   = require(basePath + '/partida.js');
 
 fs.readdirSync(basePath).forEach(
   function (file) {
@@ -49,7 +50,7 @@ module.exports = function (server) {
       }
     }
 
-    schemas[schema].find(condition).select('-_id').exec(
+    schemas[schema].find(condition).exec(
       function (err, docs) {
         if (err) { throw err; }
 
@@ -60,4 +61,58 @@ module.exports = function (server) {
       }
     );
   });
+
+  server.get('/v1/partidas/:idPartida/win', function (req, res) {
+    var condition   = {
+      _id: req.params.idPartida
+    };
+
+
+    Partida.find(condition).exec(function (err, doc) {
+      if (err) { throw err; }
+
+      if (doc[0].cerrado) {
+        res.send(false);
+      } else {
+        console.log('abierto');
+        Partida.update({_id: req.params.idPartida}, {
+            cerrado: true
+        }, function(err, numberAffected, rawResponse) {
+          if (err) { console.log(err);}
+        });
+        res.send(true);
+      }
+    })
+  });
+
+  server.get('/v1/trail/:keyword', function (req, res) {
+    setTimeout(function () {
+      res.send({
+        nombre: 'Constituyentes (METRO)',
+        latitud: '19.411671',
+        longitud: '-99.191563'
+      });
+    }, 3000);
+  });
+
+
+  server.post('/v1/:schema', basicValidations, function (req, res) {
+    var schema    = req.params.schema.slice(0, -1),
+      reference   = req.body.reference,
+      newDocument = new schemas[schema](reference);
+      //newDocument = new schemas[schema]({"name": "amet", "email": "amet.alvirde@gmail.com"});
+
+
+    newDocument.save(function (err) {
+      if (err) {
+        res.send(err);
+      }
+      res.send({
+        _id:     newDocument._id,
+        status:  true,
+        message: 'Chingón, man.'
+      });
+    });
+  });
+
 }
