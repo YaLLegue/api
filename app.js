@@ -2,10 +2,10 @@
 'use strict';
 
 var express = require('express'),
-  fs        = require('fs'),
-  path      = require('path'),
+    fs = require('fs'),
+    path = require('path'),
 
-  app = express();
+    app = express();
 
 // all environments
 app.set('port', process.env.PORT || 8888);
@@ -16,14 +16,14 @@ app.use(express.methodOverride());
 
 // development only
 if ('development' === app.get('env')) {
-  app.use(express.errorHandler());
+    app.use(express.errorHandler());
 }
 
-fs.readdirSync(__dirname + '/sections').forEach(function (file) {
-  var fullpath    = __dirname + '/sections/' + file;
-  if (fs.existsSync(fullpath) && file !== 'lib') {
-    require(fullpath)(app);
-  }
+fs.readdirSync(__dirname + '/sections').forEach(function(file) {
+    var fullpath = __dirname + '/sections/' + file;
+    if (fs.existsSync(fullpath) && file !== 'lib') {
+        require(fullpath)(app);
+    }
 });
 
 module.exports = app;
